@@ -1,0 +1,2 @@
+URL used to access the NYC open data for Fire response:
+https://data.cityofnewyork.us/resource/mhu7-c3xb.json?$where=date_extract_y(incident_datetime)>=2017
