@@ -64,7 +64,7 @@ var MapPoint = canvas.selectAll(".Point")
 function handleMouseOver (d) {
   var X = parseInt(d3.select(this).attr("cx"));
   var Y = parseInt(d3.select(this).attr("cy"));
-  console.log([X,Y]);
+  console.log([d.Lon, d.Lat]);
 
   canvas.append("rect")
   .attr("x", X+10)
