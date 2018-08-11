@@ -1,4 +1,7 @@
 
+URL used to access the NYC open data for Fire response:
+https://data.cityofnewyork.us/resource/mhu7-c3xb.json?$where=date_extract_y(incident_datetime)>=2017
+
 URL used to do geocoding of items Google screwed up:
 http://www.mapdevelopers.com/batch_geocode_tool.php
 
@@ -6,4 +9,20 @@ used Map Shaper to check shape file
 mapshaper.org
 
 
+
 Shape file from US Census Buerau (can't spell)
+
+Found alarm box locations and map on this forum
+http://www.emergency-planet.com/topic/19948-fdny-box-locations-google-maps/
+
+Downloaded alarm box locations (Fire Boxes.csv) from:
+http://www.poi-factory.com/node/11074
+
+
+Excel equations used to get the same format as the provided fire box file from the NYC open data file:
+=IF(LEFT(B2,1)="B",IF(B2="BRONX","X","B"),LEFT(B2,1))
+=IF(LEN(D2)<4, E2&REPT("0",4-LEN(D2))&D2,E2&D2)
+
+Lat and Lon limits to NYC
+LAT ( 40.91 to  30.49)
+LON (-73.70 to -74.16)
