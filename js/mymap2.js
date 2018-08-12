@@ -45,16 +45,27 @@ canvas.append("path")
 
 
 // add circles to map based on csv file
-d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Actual_2017_Response_Data_trimmed.csv").then(function(data){
+d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Buckets.csv").then(function(data){
+
+var CallMax = d3.max(data, function(d) {return parseFloat(d.Total)});
+var CallMin = d3.min(data, function(d) {return parseFloat(d.Total)});
+
+//create an opacity scale based on minimum and maximum count values
+var OpacityScale = d3.scaleLinear()
+  .domain([CallMin, CallMax])
+  .range([.04,0.5]);
+
 
 var MapPoint = canvas.selectAll(".Point")
   .data(data)
   .enter()
   .append("circle")
-  .attr("r", 3)
+  .attr("r", function(d) {return 1.5 + parseFloat(d.Total*0.0321)})
   .attr("fill", d3.rgb(127,174,236))
   .attr("cx", function(d) {return MapProjection([d.Lon, d.Lat])[0];})
   .attr("cy", function(d) {return MapProjection([d.Lon, d.Lat])[1];})
+  //.attr("fill-opacity", function(d) {return OpacityScale(d.Total)})
+  .attr("fill-opacity", 0.4)
   .attr("class", "Point")
   .on("mouseover", handleMouseOver)
   .on("mouseout", handleMouseOut);
@@ -83,7 +94,8 @@ function handleMouseOver (d) {
   .attr("fill", "white")
   .attr("font-weight", 700)
   .attr("id", "LLTXT")
-  .text("Lon, Lat: " + [d.Lon, d.Lat]);
+  .text("Opacity: " + parseFloat(d.Total*0.000459));
+  //.text("Lon, Lat: " + [d.Lon, d.Lat]);
 
 }
 
