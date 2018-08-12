@@ -45,7 +45,7 @@ canvas.append("path")
 
 
 // add circles to map based on csv file
-d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Actual_2017_Response_Data.csv").then(function(data){
+d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Actual_2017_Response_Data_trimmed.csv").then(function(data){
 
 var MapPoint = canvas.selectAll(".Point")
   .data(data)
@@ -53,7 +53,7 @@ var MapPoint = canvas.selectAll(".Point")
   .append("circle")
   .attr("r", 3)
   .attr("fill", d3.rgb(127,174,236))
-  .attr("cx", function(d) {console.log("Lon, Lat: " + MapProjection([d.Lon, d.Lat])); return MapProjection([d.Lon, d.Lat])[0];})
+  .attr("cx", function(d) {return MapProjection([d.Lon, d.Lat])[0];})
   .attr("cy", function(d) {return MapProjection([d.Lon, d.Lat])[1];})
   .attr("class", "Point")
   .on("mouseover", handleMouseOver)
