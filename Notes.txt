@@ -24,5 +24,13 @@ Excel equations used to get the same format as the provided fire box file from t
 =IF(LEN(D2)<4, E2&REPT("0",4-LEN(D2))&D2,E2&D2)
 
 Lat and Lon limits to NYC
-LAT ( 40.91 to  30.49)
+LAT ( 40.91 to  40.49)
 LON (-73.70 to -74.16)
+
+
+found a good example to access properties win array of arrays (objects of objects) using map:
+https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
+
+AMAZING EXAMPLE OF PROMISES IN D3 V5
+https://gist.github.com/adamjanes/6cf85a4fd79e122695ebde7d41fe327f
+

@@ -21,6 +21,7 @@ var NYCGJ = {
 ]
 }
 
+
 // Making manhattan projection and MapPath
 var MapProjection = d3.geoEquirectangular()
     .scale(200000)
@@ -35,98 +36,39 @@ var textx = -60;
 var texty = 370;
 
 //Basic map addition
-//canvas.append("path")
-//  .attr("d", MapPath(NYCGJ))
-//  .attr("stroke", d3.rgb(0,0,0))
-//  .attr("fill",d3.rgb(222,222,222))
-//  .attr("stroke-width", 2.5)
-//  .attr("id", "NYCMap");
-
-//add map so each borough is filled different color (test)
-canvas.selectAll("path")
-  .data(NYCGJ.features)
-  .enter()
-  .append("path")
-  .attr("d", MapPath)
+canvas.append("path")
+  .attr("d", MapPath(NYCGJ))
   .attr("stroke", d3.rgb(0,0,0))
+  .attr("fill",d3.rgb(222,222,222))
   .attr("stroke-width", 2.5)
-  .attr("fill", function(d) {
-      switch  (d.properties.name) {
-        case "Queens":
-          fillB = d3.rgb(0,100,200);
-          break;
-        case "Manhattan":
-          fillB = d3.rgb(100,0,200);
-          break;
-        case "statan Island":
-          fillB = d3.rgb(200, 100, 0);
-          break;
-        case "Bronx":
-          fillB = d3.rgb(100, 100, 50);
-          break;
-        case "Brooklyn":
-          fillB = d3.rgb(200, 220, 120);
-          break;
-      } return fillB})
   .attr("id", "NYCMap");
 
 
-// add circles to map based on csv file
-d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Buckets.csv").then(function(data){
+//per exampl from adamjanes, loading data via promies with D3.js v5 (THANK YOU)
+var promises = [
+  d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/NYC_w_Grid.csv"),
+  d3.json("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/NYC_w_Grid.json")];
 
-var CallMax = d3.max(data, function(d) {return parseFloat(d.Total)});
-var CallMin = d3.min(data, function(d) {return parseFloat(d.Total)});
+//load all promises
+Promise.all(promises).then(ready)
 
-//create an opacity scale based on minimum and maximum count values
-var OpacityScale = d3.scaleLinear()
-  .domain([CallMin, CallMax])
-  .range([.04,0.5]);
+//process data once promise is complete
+function ready(data){
+  var CallMax = d3.max(data[0], function(d) {return parseFloat(d["Event Count"])});
+  var CallMin = d3.min(data[0], function(d) {return parseFloat(d["Event Count"])});
 
+//create a color scale based on minimum and maximum count values
+  var ColorScale = d3.scaleLinear()
+    .domain([CallMin, CallMax])
+    .range([0,256]);
 
-var MapPoint = canvas.selectAll(".Point")
-  .data(data)
-  .enter()
-  .append("circle")
-  .attr("r", function(d) {return 1.5 + parseFloat(d.Total*0.0321)})
-  .attr("fill", d3.rgb(127,174,236))
-  .attr("cx", function(d) {return MapProjection([d.Lon, d.Lat])[0];})
-  .attr("cy", function(d) {return MapProjection([d.Lon, d.Lat])[1];})
-  //.attr("fill-opacity", function(d) {return OpacityScale(d.Total)})
-  .attr("fill-opacity", 0.4)
-  .attr("class", "Point")
-  .on("mouseover", handleMouseOver)
-  .on("mouseout", handleMouseOut);
-
-}); // close of d3.csv callback function
-
-function handleMouseOver (d) {
-  var X = parseInt(d3.select(this).attr("cx"));
-  var Y = parseInt(d3.select(this).attr("cy"));
-
-  canvas.append("rect")
-  .attr("x", X+10)
-  .attr("y", Y-10)
-  .attr("fill", d3.rgb(30, 48, 165))
-  .attr("height", 19)
-  .attr("width", 250)
-  .attr("rx", 7.5)
-  .attr("ry", 7.5)
-  .attr("id", "LLBox");
-
-  canvas.append("text")
-  .attr("x", X+16)
-  .attr("y", Y+3)
-  .attr("font-family", "Calibri")
-  .attr("font-size", "16px")
-  .attr("fill", "white")
-  .attr("font-weight", 700)
-  .attr("id", "LLTXT")
-  .text("Opacity: " + parseFloat(d.Total*0.000459));
-  //.text("Lon, Lat: " + [d.Lon, d.Lat]);
-
-}
-
-function handleMouseOut (d) {
-  d3.select("#LLTXT").remove();
-  d3.select("#LLBox").remove();
-}
+  canvas.selectAll("path")
+    .data(data[1].features)
+    .enter()
+    .append("path")
+    .attr("d", MapPath)
+    .attr("stroke-width", 7)
+    .attr("id", "NYCgrid")
+    .attr("fill", function (d) {return d3.rgb(
+      ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]), 0, 0)});
+  }
