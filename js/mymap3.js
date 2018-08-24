@@ -65,6 +65,7 @@ var promises = [
 //load all promises
 Promise.all(promises).then(ready)
 
+
 //process data once promise is complete
 function ready(data){
   var CallMax = d3.max(data[0], function(d) {return parseFloat(d["Event Count"])});
@@ -84,7 +85,30 @@ function ready(data){
     .attr("id", "NYCgrid")
     .attr("fill", function (d) { var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
       return d3.rgb(255, 255-scaledEC, 255-scaledEC)});
-  }
+
+  //load fire house data
+  d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/FDNY_Firehouse_Listing.csv").then(function(fire){
+
+    var firehouse = paint.selectAll("cirlce")
+      .data(fire)
+      .enter()
+      .append("circle")
+      .attr("r", 1.5)
+      .attr("fill", d3.rgb(127,174,236))
+      .attr("cx", 300)//function(d) {return MapProjection(d.Longitude);})
+      .attr("cy", 300)//function(d) {return MapProjection(d.Latitude);})
+      .attr("fill-opacity", 0.8)
+      .attr("id", fire.BIN);
+
+  console.log(fire);
+  }); //csv call back function for fire'
+
+}// ready function
+
+
+
+
+
 
 
 function zoomed() {
