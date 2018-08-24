@@ -1,11 +1,24 @@
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = 2100 - margin.left - margin.right,
-    height = 1600 - margin.top - margin.bottom;
+var MyDiv = document.getElementById("stuffgoeshere");
 
+var margin = {top: 20, right: 20, bottom: 30, left: 50};
+    width = MyDiv.clientWidth - margin.left - margin.right,
+    height = MyDiv.clientHeight - margin.top - margin.bottom;
+    //width = 2100 - margin.left - margin.right,
+    //height = 1600 - margin.top - margin.bottom;
+
+// define zoom fucntion, following example by Mike Bobstock
+var zoom = d3.zoom()
+  .scaleExtent([0.5,20])
+  .translateExtent([[-100,-100],[width + 100, height + 100]])
+  .on("zoom",zoomed);
 
 var canvas = d3.select(".MAP").append("svg")
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom);
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+  .call(zoom);
+
+//create group element
+var paint = canvas.append("g");
 
 // GEOJSON data of NYC
 var NYCGJ = {
@@ -36,7 +49,7 @@ var textx = -60;
 var texty = 370;
 
 //Basic map addition
-canvas.append("path")
+paint.append("path")
   .attr("d", MapPath(NYCGJ))
   .attr("stroke", d3.rgb(0,0,0))
   .attr("fill",d3.rgb(222,222,222))
@@ -62,13 +75,18 @@ function ready(data){
     .domain([CallMin, CallMax])
     .range([0,256]);
 
-  canvas.selectAll("path")
+  paint.selectAll("path")
     .data(data[1].features)
     .enter()
     .append("path")
     .attr("d", MapPath)
-    .attr("stroke-width", 7)
+    .attr("stroke-opacity", 0)
     .attr("id", "NYCgrid")
-    .attr("fill", function (d) {return d3.rgb(
-      ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]), 0, 0)});
+    .attr("fill", function (d) { var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
+      return d3.rgb(255, 255-scaledEC, 255-scaledEC)});
   }
+
+
+function zoomed() {
+  paint.attr("transform", d3.event.transform);
+}
