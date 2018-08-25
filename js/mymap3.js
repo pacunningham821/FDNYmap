@@ -28,8 +28,8 @@ var background = canvas.append("rect")
   .attr("y", 0)
   .attr("width", width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
-  .attr("fill", d3.rgb(255,166,77))
-  .attr("fill-opacity", 0.2)
+  .attr("fill", d3.rgb(55,50,52))
+  .attr("fill-opacity", 0.8)
   .attr("id", "Background");
 
 //create group element.
@@ -37,24 +37,74 @@ var paint = canvas.append("g");
 
 //create mini bar graph + table with key
 d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary_Table.csv").then(function(s){
+  // basic counter to count entries
   var i = 0;
+  //define constant locations for all entries
+  var ST_bname_x = 185; // x location for far left entry, name
+  var ST_bname_y = 150; // y location for highest entry, manhattan
+  var fs = 20; // font size
+  var barheight = 30; //height of the bars
+  var gap = 4; // gap between each bar
+  var barlength = 250; // max bar length
+  var MaxGradColor = 240; // Max RGB values for gradient
   //create scale for bar length
   var EventMax = d3.max(s, function(d) {return parseFloat(d.EventCount)});
-  var EventMin = d3.min(s, function(d) {return parseFloat(d.EventCount)});
   var BarWidth = d3.scaleLinear()
     .domain([0, EventMax])
-    .range([0,200]);
+    .range([0,barlength]);
 
-  var ST = paint.selectAll("rect")
+
+  //Create a gradient scal for the bars
+/*  var gradient = canvas.append("defs")
+    .append("linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0%")
+      .attr("spreadMethod", "pad");
+
+  gradient.append("stop")
+    .attr("class", "left")
+    .attr("offset", "0%")
+    .attr("stop-color", d3.rgb(255,255,255))
+    .attr("stop-opacity", 1);
+
+  gradient.append("stop")
+    .attr("class", "right")
+    .attr("offset", "100%")
+    .attr("stop-color", d3.rgb(240,0,0))
+    .attr("stop-opacity", 1);
+*/
+
+  //add the bars
+  var ST_EC = paint.selectAll("rect")
     .data(s)
     .enter()
     .append("rect")
-    .attr("x", 100)
-    .attr("y", function() {i++; return 130+i*34;})
-    .attr("height", 30)
-    .attr("width", function(d) {console.log(BarWidth(d.EventCount)); return BarWidth(d.EventCount);})
-    .attr("fill", d3.rgb(255,30,30))
-    .attr("id", function(d) {return "ST_" + d.EventCoun;});
+    .attr("x", ST_bname_x + 10)
+    .attr("y", function() {i++; return ST_bname_y+i*(barheight+gap);})
+    .attr("height", barheight)
+    .attr("width", function(d) {return BarWidth(d.EventCount);})
+    .attr("fill", DynamicGradient)
+    //{d3.selectAll(".right").attr("offset", 100*BarWidth(d.EventCount)/barlength + "%"); return "url(#gradient)";})
+    .attr("id", function(d) {return "ST_" + d.Borough;});
+  // reset the counter
+  i = 0;
+  // the borough names for the bars
+  var ST_BN = paint.selectAll("text")
+    .data(s)
+    .enter()
+    .append("text")
+    .attr("x", ST_bname_x)
+    .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
+    .attr("font-family", "Calibri")
+    .attr("font-size", fs)
+    .attr("fill", "black")
+    .attr("font-weight", 400)
+    .attr("text-anchor", "end")
+    .attr("id", function(d) {return "STbn_" + d.Borough;})
+    .text(function(d) {return d.Borough});
 
 })// csv load of summary table
 
@@ -106,7 +156,7 @@ function ready(data){
 //create a color scale based on minimum and maximum count values
   var ColorScale = d3.scaleLinear()
     .domain([CallMin, CallMax])
-    .range([0,256]);
+    .range([0,255]);
 
   paint.selectAll("path")
     .data(data[1].features)
@@ -114,8 +164,10 @@ function ready(data){
     .append("path")
     .attr("d", MapPath)
     .attr("id", "NYCgrid")
-    .attr("fiil-opacity", 0.2)
-    .attr("fill", function (d) { var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
+    .attr("fill-opacity", 1)
+    .attr("fill", function (d) {var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
+      return d3.rgb(255, 255-scaledEC, 255-scaledEC)})
+    .attr("stroke", function (d) {var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
       return d3.rgb(255, 255-scaledEC, 255-scaledEC)});
     //.on("mouseover", handleMouseOver)
     //.on("mouseout", handleMouseOut);
@@ -152,6 +204,31 @@ function zoomed() {
   paint.attr("transform", d3.event.transform);
 }
 
+function DynamicGradient(d) {
+
+  var gradient = canvas.append("defs")
+    .append("linearGradient")
+      .attr("id", "gradient" + d.Borough)
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0%")
+      .attr("spreadMethod", "pad");
+
+  gradient.append("stop")
+    .attr("class", "left")
+    .attr("offset", "0%")
+    .attr("stop-color", d3.rgb(255,255,255))
+    .attr("stop-opacity", 1);
+
+  gradient.append("stop")
+    .attr("class", "right")
+    .attr("offset", "100%")
+    .attr("stop-color", d3.rgb(240*d.EventCount/168309,0+240*d.EventCount/168309,0))
+    .attr("stop-opacity", 1);
+
+  return ("url(#gradient" + d.Borough + ")")
+}
 //function handleMouseOver(d) {
 //  d3.select(this).attr("stroke",d3.rgb(20,20,20));
 //  d3.select(this).attr("stroke-width", 2);
