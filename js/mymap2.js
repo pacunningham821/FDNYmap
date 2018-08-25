@@ -74,6 +74,8 @@ canvas.selectAll("path")
 // add circles to map based on csv file
 d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/Buckets.csv").then(function(data){
 
+console.log(data);
+
 var CallMax = d3.max(data, function(d) {return parseFloat(d.Total)});
 var CallMin = d3.min(data, function(d) {return parseFloat(d.Total)});
 

@@ -1,3 +1,9 @@
+//This script is meant to graph a heat map of 2017 FDNY responses
+// Aug 2018
+// Paul Cunningham
+// <><><><>
+// going to use dynamic window size to display first image. Want to avoid scroll
+// Set up space to display map and data <
 var MyDiv = document.getElementById("stuffgoeshere");
 
 var margin = {top: 20, right: 20, bottom: 30, left: 50};
@@ -17,8 +23,24 @@ var canvas = d3.select(".MAP").append("svg")
 	.attr("height", height + margin.top + margin.bottom)
   .call(zoom);
 
-//create group element
+var background = canvas.append("rect")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+  .attr("fill", d3.rgb(255,166,77))
+  .attr("fill-opacity", 0.2)
+  .attr("id", "Background");
+
+//create group element.
 var paint = canvas.append("g");
+
+//create mini bar graph + table with key
+//count of events per borough
+var Bcount =
+
+
+
 
 // GEOJSON data of NYC
 var NYCGJ = {
@@ -37,24 +59,14 @@ var NYCGJ = {
 
 // Making manhattan projection and MapPath
 var MapProjection = d3.geoEquirectangular()
-    .scale(200000)
+    //.scale(200000)
+    .fitExtent([[0,0],[width,height]], NYCGJ)
     .center([-73.9757, 40.7073])
     .translate([width/2, height/2]);
 
 // Manhattan path with equirectangular projection
 var MapPath = d3.geoPath()
     .projection(MapProjection);
-
-var textx = -60;
-var texty = 370;
-
-//Basic map addition
-paint.append("path")
-  .attr("d", MapPath(NYCGJ))
-  .attr("stroke", d3.rgb(0,0,0))
-  .attr("fill",d3.rgb(222,222,222))
-  .attr("stroke-width", 2.5)
-  .attr("id", "NYCMap");
 
 
 //per exampl from adamjanes, loading data via promies with D3.js v5 (THANK YOU)
@@ -81,10 +93,12 @@ function ready(data){
     .enter()
     .append("path")
     .attr("d", MapPath)
-    .attr("stroke-opacity", 0)
     .attr("id", "NYCgrid")
+    .attr("fiil-opacity", 0.2)
     .attr("fill", function (d) { var scaledEC = ColorScale(data[0][data[0].map(function(a) {return parseInt(a.fid)}).indexOf(d.properties.fid)]["Event Count"]);
       return d3.rgb(255, 255-scaledEC, 255-scaledEC)});
+    //.on("mouseover", handleMouseOver)
+    //.on("mouseout", handleMouseOut);
 
   //load fire house data
   d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/FDNY_Firehouse_Listing.csv").then(function(fire){
@@ -93,24 +107,37 @@ function ready(data){
       .data(fire)
       .enter()
       .append("circle")
-      .attr("r", 1.5)
-      .attr("fill", d3.rgb(127,174,236))
-      .attr("cx", 300)//function(d) {return MapProjection(d.Longitude);})
-      .attr("cy", 300)//function(d) {return MapProjection(d.Latitude);})
-      .attr("fill-opacity", 0.8)
-      .attr("id", fire.BIN);
+      .attr("r", 2.5)
+      .attr("fill", d3.rgb(8,186,255))
+      .attr("stroke", d3.rgb(40,39,38))
+      .attr("stroke-width", 0.5)
+      .attr("cx", function(d) {return MapProjection([d.Longitude, d.Latitude])[0];})
+      .attr("cy", function(d) {return MapProjection([d.Longitude, d.Latitude])[1];})
+      .attr("fill-opacity", 0.5)
+      .attr("id", function(d) {return d.BIN});
 
-  console.log(fire);
   }); //csv call back function for fire'
 
+  //Map with borough outlines
+  paint.append("path")
+    .attr("d", MapPath(NYCGJ))
+    .attr("stroke", d3.rgb(40,38,39))
+    .attr("fill", "none")
+    .attr("stroke-width", 2.5)
+    .attr("id", "NYCMap");
+
 }// ready function
-
-
-
-
-
-
 
 function zoomed() {
   paint.attr("transform", d3.event.transform);
 }
+
+//function handleMouseOver(d) {
+//  d3.select(this).attr("stroke",d3.rgb(20,20,20));
+//  d3.select(this).attr("stroke-width", 2);
+//  console.log("Here")
+//}
+
+//function handleMouseOut (d) {
+//
+//}
