@@ -36,8 +36,28 @@ var background = canvas.append("rect")
 var paint = canvas.append("g");
 
 //create mini bar graph + table with key
-//count of events per borough
-var Bcount =
+d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary_Table.csv").then(function(s){
+  var i = 0;
+  //create scale for bar length
+  var EventMax = d3.max(s, function(d) {return parseFloat(d.EventCount)});
+  var EventMin = d3.min(s, function(d) {return parseFloat(d.EventCount)});
+  var BarWidth = d3.scaleLinear()
+    .domain([0, EventMax])
+    .range([0,200]);
+
+  var ST = paint.selectAll("rect")
+    .data(s)
+    .enter()
+    .append("rect")
+    .attr("x", 100)
+    .attr("y", function() {i++; return 130+i*34;})
+    .attr("height", 30)
+    .attr("width", function(d) {console.log(BarWidth(d.EventCount)); return BarWidth(d.EventCount);})
+    .attr("fill", d3.rgb(255,30,30))
+    .attr("id", function(d) {return "ST_" + d.EventCoun;});
+
+})// csv load of summary table
+
 
 
 
