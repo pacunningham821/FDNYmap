@@ -114,6 +114,7 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .text(function(d) {return d.Firehouses});
   // reset the counter
   i = 0;
+  // list population, density, and area data
   var ST_FT = paint.selectAll(".pop")
     .data(s)
     .enter()
@@ -126,14 +127,14 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("text-anchor", "start")
     .attr("class", "pop")
     .attr("id", function(d) {return "STpop_" + d.Borough;})
-    .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M   [ " + f(d.Density/1000) + " k/mi\u00B2]"});
+    .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M  " + d.Area +" mi\u00B2 [ " + f(d.Density/1000) + " k/mi\u00B2]"});
 
 })// csv load of summary table
 
 
 
 
-/*
+
 
 
 // GEOJSON data of NYC
@@ -223,7 +224,7 @@ function ready(data){
     .attr("id", "NYCMap");
 
 }// ready function
-*/
+//*/
 
 function zoomed() {
   paint.attr("transform", d3.event.transform);
