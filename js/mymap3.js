@@ -32,7 +32,7 @@ var background = canvas.append("rect")
   .attr("fill-opacity", 0.8)
   .attr("id", "Background");
 
-//create group element.
+//create group element
 var paint = canvas.append("g");
 
 //create mini bar graph + table with key
@@ -53,30 +53,6 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .domain([0, EventMax])
     .range([0,barlength]);
 
-
-  //Create a gradient scal for the bars
-/*  var gradient = canvas.append("defs")
-    .append("linearGradient")
-      .attr("id", "gradient")
-      .attr("x1", "0%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "0%")
-      .attr("spreadMethod", "pad");
-
-  gradient.append("stop")
-    .attr("class", "left")
-    .attr("offset", "0%")
-    .attr("stop-color", d3.rgb(255,255,255))
-    .attr("stop-opacity", 1);
-
-  gradient.append("stop")
-    .attr("class", "right")
-    .attr("offset", "100%")
-    .attr("stop-color", d3.rgb(240,0,0))
-    .attr("stop-opacity", 1);
-*/
-
   //add the bars
   var ST_EC = paint.selectAll("rect")
     .data(s)
@@ -87,7 +63,6 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("height", barheight)
     .attr("width", function(d) {return BarWidth(d.EventCount);})
     .attr("fill", DynamicGradient)
-    //{d3.selectAll(".right").attr("offset", 100*BarWidth(d.EventCount)/barlength + "%"); return "url(#gradient)";})
     .attr("id", function(d) {return "ST_" + d.Borough;});
   // reset the counter
   i = 0;
@@ -100,16 +75,65 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
     .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "black")
-    .attr("font-weight", 400)
+    .attr("fill", "White")
+    .attr("stroke", d3.rgb(40,40,40))
+    .attr("stroke-width", 0.1)
+    .attr("font-weight", 700)
     .attr("text-anchor", "end")
     .attr("id", function(d) {return "STbn_" + d.Borough;})
-    .text(function(d) {return d.Borough});
+    .text(function(d) {return d.Borough})
+  // reset the counter
+  i = 0;
+  //Add firehouse count in circles
+  var ST_FH = paint.selectAll("circle")
+    .data(s)
+    .enter()
+    .append("circle")
+    .attr("cx", ST_bname_x + barlength + 45)
+    .attr("cy", function() {i++; return (ST_bname_y+i*(barheight+gap))+(barheight/2);})
+    .attr("r", barheight/2)
+    .attr("fill", d3.rgb(8,186,255))
+    .attr("stroke", d3.rgb(40,39,38))
+    .attr("stroke-width", 0.5)
+    .attr("id", function(d) {return "STfh_" + d.Borough;});
+  // reset the counter
+  i = 0;
+  //Add firehouse count
+  var ST_FT = paint.selectAll(".FH_ct")
+    .data(s)
+    .enter()
+    .append("text")
+    .attr("x", ST_bname_x + barlength + 45)
+    .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
+    .attr("font-family", "Calibri")
+    .attr("font-size", fs)
+    .attr("fill", "White")
+    .attr("text-anchor", "middle")
+    .attr("class", "FH_ct")
+    .attr("id", function(d) {return "STft_" + d.Borough;})
+    .text(function(d) {return d.Firehouses});
+  // reset the counter
+  i = 0;
+  var ST_FT = paint.selectAll(".pop")
+    .data(s)
+    .enter()
+    .append("text")
+    .attr("x", ST_bname_x + barlength + barheight/2 + 75)
+    .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
+    .attr("font-family", "Calibri")
+    .attr("font-size", fs)
+    .attr("fill", "White")
+    .attr("text-anchor", "start")
+    .attr("class", "pop")
+    .attr("id", function(d) {return "STpop_" + d.Borough;})
+    .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M   [ " + f(d.Density/1000) + " k/mi\u00B2]"});
 
 })// csv load of summary table
 
 
 
+
+/*
 
 
 // GEOJSON data of NYC
@@ -199,6 +223,7 @@ function ready(data){
     .attr("id", "NYCMap");
 
 }// ready function
+*/
 
 function zoomed() {
   paint.attr("transform", d3.event.transform);
@@ -208,7 +233,7 @@ function DynamicGradient(d) {
 
   var gradient = canvas.append("defs")
     .append("linearGradient")
-      .attr("id", "gradient" + d.Borough)
+      .attr("id", "gradient" + d.ID)
       .attr("x1", "0%")
       .attr("y1", "0%")
       .attr("x2", "100%")
@@ -224,10 +249,10 @@ function DynamicGradient(d) {
   gradient.append("stop")
     .attr("class", "right")
     .attr("offset", "100%")
-    .attr("stop-color", d3.rgb(240*d.EventCount/168309,0+240*d.EventCount/168309,0))
+    .attr("stop-color", d3.rgb(240,255-255*d.EventCount/168309,255-255*d.EventCount/168309))
     .attr("stop-opacity", 1);
 
-  return ("url(#gradient" + d.Borough + ")")
+  return ("url(#gradient" + d.ID + ")")
 }
 //function handleMouseOver(d) {
 //  d3.select(this).attr("stroke",d3.rgb(20,20,20));
