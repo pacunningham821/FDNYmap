@@ -38,14 +38,14 @@ var paint = canvas.append("g");
 //create mini bar graph + table with key
 d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary_Table.csv").then(function(s){
   // basic counter to count entries
-  var i = 0;
+  var i = -1;
   //define constant locations for all entries
-  var ST_bname_x = 185; // x location for far left entry, name
-  var ST_bname_y = 150; // y location for highest entry, manhattan
+  var ST_bname_x = 140; // x location for far left entry, name
+  var ST_bname_y = 330; // y location for highest entry, manhattan
   var fs = 20; // font size
   var barheight = 30; //height of the bars
   var gap = 4; // gap between each bar
-  var barlength = 250; // max bar length
+  var barlength = 225; // max bar length
   var MaxGradColor = 240; // Max RGB values for gradient
   //create scale for bar length
   var EventMax = d3.max(s, function(d) {return parseFloat(d.EventCount)});
@@ -54,10 +54,11 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .range([0,barlength]);
 
   //add the bars
-  var ST_EC = paint.selectAll("rect")
+  var ST_EC = paint.selectAll(".bars")
     .data(s)
     .enter()
     .append("rect")
+    .attr("class", "bars")
     .attr("x", ST_bname_x + 10)
     .attr("y", function() {i++; return ST_bname_y+i*(barheight+gap);})
     .attr("height", barheight)
@@ -65,7 +66,7 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("fill", DynamicGradient)
     .attr("id", function(d) {return "ST_" + d.Borough;});
   // reset the counter
-  i = 0;
+  i = -1;
   // the borough names for the bars
   var ST_BN = paint.selectAll("text")
     .data(s)
@@ -83,13 +84,13 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("id", function(d) {return "STbn_" + d.Borough;})
     .text(function(d) {return d.Borough})
   // reset the counter
-  i = 0;
+  i = -1;
   //Add firehouse count in circles
   var ST_FH = paint.selectAll("circle")
     .data(s)
     .enter()
     .append("circle")
-    .attr("cx", ST_bname_x + barlength + 45)
+    .attr("cx", ST_bname_x + barlength + 63)
     .attr("cy", function() {i++; return (ST_bname_y+i*(barheight+gap))+(barheight/2);})
     .attr("r", barheight/2)
     .attr("fill", d3.rgb(8,186,255))
@@ -97,13 +98,13 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("stroke-width", 0.5)
     .attr("id", function(d) {return "STfh_" + d.Borough;});
   // reset the counter
-  i = 0;
+  i = -1;
   //Add firehouse count
   var ST_FT = paint.selectAll(".FH_ct")
     .data(s)
     .enter()
     .append("text")
-    .attr("x", ST_bname_x + barlength + 45)
+    .attr("x", ST_bname_x + barlength + 63)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
     .attr("font-family", "Calibri")
     .attr("font-size", fs)
@@ -113,13 +114,13 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("id", function(d) {return "STft_" + d.Borough;})
     .text(function(d) {return d.Firehouses});
   // reset the counter
-  i = 0;
+  i = -1;
   // list population, density, and area data
-  var ST_FT = paint.selectAll(".pop")
+  var ST_PT = paint.selectAll(".pop")
     .data(s)
     .enter()
     .append("text")
-    .attr("x", ST_bname_x + barlength + barheight/2 + 75)
+    .attr("x", ST_bname_x + barlength + barheight/2 + 125)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
     .attr("font-family", "Calibri")
     .attr("font-size", fs)
@@ -127,11 +128,138 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .attr("text-anchor", "start")
     .attr("class", "pop")
     .attr("id", function(d) {return "STpop_" + d.Borough;})
-    .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M  " + d.Area +" mi\u00B2 [ " + f(d.Density/1000) + " k/mi\u00B2]"});
+    .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M"});
 
+  // reset the counter
+  i = -1;
+  // list density
+  var ST_AT = paint.selectAll(".are")
+    .data(s)
+    .enter()
+    .append("text")
+    .attr("x", ST_bname_x + barlength + barheight/2 + 205)
+    .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
+    .attr("font-family", "Calibri")
+    .attr("font-size", fs)
+    .attr("fill", "White")
+    .attr("text-anchor", "start")
+    .attr("class", "are")
+    .attr("id", function(d) {return "STare_" + d.Borough;})
+    .text(function(d) {var f = d3.format("1.1f"); return d.Area +" mi\u00B2"});
+
+  // reset the counter
+  i = -1;
+  // list population, density, and area data
+  var ST_DT = paint.selectAll(".den")
+    .data(s)
+    .enter()
+    .append("text")
+    .attr("x", ST_bname_x + barlength + barheight/2 + 280)
+    .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
+    .attr("font-family", "Calibri")
+    .attr("font-size", fs)
+    .attr("fill", "White")
+    .attr("text-anchor", "start")
+    .attr("class", "den")
+    .attr("id", function(d) {return "STden_" + d.Borough;})
+    .text(function(d) {var f = d3.format("1.1f"); return f(d.Density/1000) + " k/mi\u00B2"});
+
+  var outline = paint.append("rect")
+    .attr("x", ST_bname_x - 120)
+    .attr("y", ST_bname_y - 40)
+    .attr("width", barlength + barheight/2 + 500)
+    .attr("height", (i+1)*(barheight+gap) + 63)
+    .attr("fill", "none")
+    .attr("stroke", d3.rgb(180,180,180))
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", ("20,5,10,5"))
+    .attr("rx", 40)
+    .attr("ry", 20)
+    .attr("id", "Outline");
+
+
+  //add table headers, text seperated by line. styles handled by style stylesheet
+  var tablelines = [
+    {"x": ST_bname_x - 78, "width": 74, "header": "Borough"},
+    {"x": ST_bname_x + 30, "width": barlength-43, "header": "# of FDNY Dispatches"},
+    {"x": ST_bname_x + barlength + 30 - barheight/2, "width": barheight + 62, "header": "Firehouses"},
+    {"x": ST_bname_x + barlength + barheight/2 + 100, "width": 92, "header": "Population"},
+    {"x": ST_bname_x + barlength + barheight/2 + 211, "width": 39, "header": " Area"},
+    {"x": ST_bname_x + barlength + barheight/2 + 287, "width": 63, "header": "Density"},
+  ];
+
+  var ST_TL = paint.selectAll(".tl")
+      .data(tablelines)
+      .enter()
+      .append("rect")
+      .attr("class", "tl")
+      .attr("x", function(d) {return d.x})
+      .attr("y", ST_bname_y - 7)
+      .attr("height",3)
+      .attr("width", function(d) {return d.width})
+      .attr("fill", d3.rgb(180,180,180));
+
+  var ST_TH = paint.selectAll(".headers")
+    .data(tablelines)
+    .enter()
+    .append("text")
+    .attr("class", "headers")
+    .attr("x", function(d) {return d.x})
+    .attr("y", ST_bname_y - 11)
+    .attr("font-size", fs+1)
+    .attr("fill", d3.rgb(180,180,180))
+    .attr("font-family", "Calibri")
+    .attr("text-anchor", "start")
+    .text(function(d) {return d.header});
+
+  var ST_R = paint.append("text")
+    .attr("x", barlength + barheight/2 + 500)
+    .attr("y", ST_bname_y + (i+1)*(barheight+gap)+ 15)
+    .attr("font-family", "Calibri")
+    .attr("text-anchor", "end")
+    .attr("font-size", fs - 10)
+    .attr("fill", d3.rgb(180,180,180))
+    .text("References for table; # of FDNY Dispatches [1]; Firhouses[2]; Population, Area & Density [3]");
 })// csv load of summary table
 
 
+//Create the Key
+
+//key gradient bar, bar will be filled when map is loaded
+var key_x = 140;
+var key_y = 600;
+
+//Create gradient for the key
+var gradient = canvas.append("defs")
+  .append("linearGradient")
+    .attr("id", "gradient4key")
+    .attr("x1", "0%")
+    .attr("y1", "100%")
+    .attr("x2", "0%")
+    .attr("y2", "0%")
+    .attr("spreadMethod", "pad");
+
+gradient.append("stop")
+  .attr("class", "bottom")
+  .attr("offset", "0%")
+  .attr("stop-color", d3.rgb(255,255,255))
+  .attr("stop-opacity", 1);
+
+gradient.append("stop")
+  .attr("class", "top")
+  .attr("offset", "100%")
+  .attr("stop-color", d3.rgb(255,0,0))
+  .attr("stop-opacity", 1);
+
+//bar for key
+paint.append("rect")
+  .attr("class", "key")
+  .attr("x", key_x)
+  .attr("y", key_y)
+  .attr("width", 25)
+  .attr("height", 100)
+  .attr("fill", "url(#gradient4key)")
+  .attr("id", "key_gradient");
 
 
 
@@ -212,6 +340,7 @@ function ready(data){
       .attr("cy", function(d) {return MapProjection([d.Longitude, d.Latitude])[1];})
       .attr("fill-opacity", 0.5)
       .attr("id", function(d) {return d.BIN});
+
 
   }); //csv call back function for fire'
 
