@@ -34,6 +34,7 @@ var background = canvas.append("rect")
 
 //create group element
 var paint = canvas.append("g");
+var paint2 = canvas.append("g")
 
 //create mini bar graph + table with key
 d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary_Table.csv").then(function(s){
@@ -53,10 +54,9 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
     .domain([0, EventMax])
     .range([0,barlength]);
 
+var tablePaint = paint2.selectAll("g").data(s).enter();
   //add the bars
-  var ST_EC = paint.selectAll(".bars")
-    .data(s)
-    .enter()
+  var ST_EC = tablePaint
     .append("rect")
     .attr("class", "bars")
     .attr("x", ST_bname_x + 10)
@@ -68,15 +68,12 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
   // reset the counter
   i = -1;
   // the borough names for the bars
-  var ST_BN = paint.selectAll("text")
-    .data(s)
-    .enter()
+  var ST_BN = tablePaint
     .append("text")
+    .attr("class", "tableText")
     .attr("x", ST_bname_x)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
-    .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "White")
     .attr("stroke", d3.rgb(40,40,40))
     .attr("stroke-width", 0.1)
     .attr("font-weight", 700)
@@ -86,81 +83,61 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
   // reset the counter
   i = -1;
   //Add firehouse count in circles
-  var ST_FH = paint.selectAll("circle")
-    .data(s)
-    .enter()
+  var ST_FH = tablePaint
     .append("circle")
     .attr("cx", ST_bname_x + barlength + 63)
     .attr("cy", function() {i++; return (ST_bname_y+i*(barheight+gap))+(barheight/2);})
     .attr("r", barheight/2)
-    .attr("fill", d3.rgb(8,186,255))
-    .attr("stroke", d3.rgb(40,39,38))
-    .attr("stroke-width", 0.5)
+    .attr("class", "FH_Circle")
     .attr("id", function(d) {return "STfh_" + d.Borough;});
   // reset the counter
   i = -1;
   //Add firehouse count
-  var ST_FT = paint.selectAll(".FH_ct")
-    .data(s)
-    .enter()
+  var ST_FT = tablePaint
     .append("text")
     .attr("x", ST_bname_x + barlength + 63)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
-    .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "White")
     .attr("text-anchor", "middle")
-    .attr("class", "FH_ct")
+    .attr("class", "tableText")
     .attr("id", function(d) {return "STft_" + d.Borough;})
     .text(function(d) {return d.Firehouses});
   // reset the counter
   i = -1;
   // list population, density, and area data
-  var ST_PT = paint.selectAll(".pop")
-    .data(s)
-    .enter()
+  var ST_PT = tablePaint
     .append("text")
     .attr("x", ST_bname_x + barlength + barheight/2 + 125)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
-    .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "White")
     .attr("text-anchor", "start")
-    .attr("class", "pop")
+    .attr("class", "tableText")
     .attr("id", function(d) {return "STpop_" + d.Borough;})
     .text(function(d) {var f = d3.format("1.1f"); return f(d.Population/1000000) + "M"});
 
   // reset the counter
   i = -1;
   // list density
-  var ST_AT = paint.selectAll(".are")
-    .data(s)
-    .enter()
+  var ST_AT = tablePaint
     .append("text")
     .attr("x", ST_bname_x + barlength + barheight/2 + 205)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
-    .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "White")
     .attr("text-anchor", "start")
-    .attr("class", "are")
+    .attr("class", "tableText")
     .attr("id", function(d) {return "STare_" + d.Borough;})
     .text(function(d) {var f = d3.format("1.1f"); return d.Area +" mi\u00B2"});
 
   // reset the counter
   i = -1;
   // list population, density, and area data
-  var ST_DT = paint.selectAll(".den")
-    .data(s)
-    .enter()
+  var ST_DT = tablePaint
     .append("text")
     .attr("x", ST_bname_x + barlength + barheight/2 + 280)
     .attr("y", function() {i++; return (ST_bname_y+i*(barheight+gap))+((barheight+gap)/2+fs/2-5);})
-    .attr("font-family", "Calibri")
     .attr("font-size", fs)
-    .attr("fill", "White")
     .attr("text-anchor", "start")
-    .attr("class", "den")
+    .attr("class", "tableText")
     .attr("id", function(d) {return "STden_" + d.Borough;})
     .text(function(d) {var f = d3.format("1.1f"); return f(d.Density/1000) + " k/mi\u00B2"});
 
@@ -226,8 +203,10 @@ d3.csv("https://raw.githubusercontent.com/pacunningham821/FDNYmap/master/summary
 //Create the Key
 
 //key gradient bar, bar will be filled when map is loaded
-var key_x = 140;
-var key_y = 600;
+var key_x = 80;
+var key_y = 590;
+var key_width = 25;
+var key_height = 110;
 
 //Create gradient for the key
 var gradient = canvas.append("defs")
@@ -253,13 +232,60 @@ gradient.append("stop")
 
 //bar for key
 paint.append("rect")
-  .attr("class", "key")
   .attr("x", key_x)
   .attr("y", key_y)
-  .attr("width", 25)
-  .attr("height", 100)
+  .attr("width", key_width)
+  .attr("height", key_height)
   .attr("fill", "url(#gradient4key)")
   .attr("id", "key_gradient");
+
+// text for gradient
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x - 2)
+  .attr("y", key_y + key_height)
+  .text("0");
+
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("transform",  "translate(" + (key_x - 15) + "," + (key_y + key_height) + ") rotate(270)")
+  .style("text-anchor", "start")
+  .text("Call Volume\u2192");
+
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x + key_width/2 + 20)
+  .attr("y", key_y + key_height/2 - 8)
+  .style("text-anchor", "start")
+  .text("Map grid is 0.0042\xB0 latitude by 0.0042\xB0 longitude");
+
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x + key_width/2 + 20)
+  .attr("y", key_y + key_height/2 + 8)
+  .style("text-anchor", "start")
+  .text("Fill for each square follows this gradient to show call volume");
+
+// fire house dot
+paint.append("circle")
+  .attr("class", "FH_Circle")
+  .attr("cx", key_x + key_width/2)
+  .attr("cy", key_y + key_height + 24)
+  .attr("r", 12);
+
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x + key_width/2 + 20)
+  .attr("y", key_y + key_height + 22)
+  .style("text-anchor", "start")
+  .text("Firehouse loactions");
+
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x + key_width/2 + 20)
+  .attr("y", key_y + key_height + 38)
+  .style("text-anchor", "start")
+  .text("marked by blue circles");
 
 
 
@@ -306,6 +332,13 @@ function ready(data){
   var CallMax = d3.max(data[0], function(d) {return parseFloat(d["Event Count"])});
   var CallMin = d3.min(data[0], function(d) {return parseFloat(d["Event Count"])});
 
+// add text to the key with the callMax value
+paint.append("text")
+  .attr("class", "keybartext")
+  .attr("x", key_x - 2)
+  .attr("y", key_y + 12)
+  .text(CallMax);
+
 //create a color scale based on minimum and maximum count values
   var ColorScale = d3.scaleLinear()
     .domain([CallMin, CallMax])
@@ -333,12 +366,10 @@ function ready(data){
       .enter()
       .append("circle")
       .attr("r", 2.5)
-      .attr("fill", d3.rgb(8,186,255))
-      .attr("stroke", d3.rgb(40,39,38))
-      .attr("stroke-width", 0.5)
       .attr("cx", function(d) {return MapProjection([d.Longitude, d.Latitude])[0];})
       .attr("cy", function(d) {return MapProjection([d.Longitude, d.Latitude])[1];})
       .attr("fill-opacity", 0.5)
+      .attr("class", "FH_Circle")
       .attr("id", function(d) {return d.BIN});
 
 
@@ -357,6 +388,7 @@ function ready(data){
 
 function zoomed() {
   paint.attr("transform", d3.event.transform);
+  paint2.attr("transform", d3.event.transform);
 }
 
 function DynamicGradient(d) {

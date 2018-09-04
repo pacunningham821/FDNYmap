@@ -34,3 +34,4 @@ https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
 AMAZING EXAMPLE OF PROMISES IN D3 V5
 https://gist.github.com/adamjanes/6cf85a4fd79e122695ebde7d41fe327f
 
+pulled population data from Wikipedia		    
