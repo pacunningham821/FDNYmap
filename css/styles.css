@@ -23,3 +23,10 @@
   font-family: Calibri;
   fill: rgb(255,255,255);
 }
+
+.ptext{
+  font: Calibri;
+  font-size: 15px;
+  fill: rgb(255,255,255);
+  text-anchor: start;
+}

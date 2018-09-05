@@ -3,14 +3,17 @@
 // Paul Cunningham
 // <><><><>
 // going to use dynamic window size to display first image. Want to avoid scroll
-// Set up space to display map and data <
-var MyDiv = document.getElementById("stuffgoeshere");
+// Set up space to display map and data
+//var MyDiv = document.getElementById("stuffgoeshere");
+
+//have to correct for all kinds of things with dynamic window, going fixed for
+//now. Sep 04, 2018
 
 var margin = {top: 20, right: 20, bottom: 30, left: 50};
-    width = MyDiv.clientWidth - margin.left - margin.right,
-    height = MyDiv.clientHeight - margin.top - margin.bottom;
-    //width = 2100 - margin.left - margin.right,
-    //height = 1600 - margin.top - margin.bottom;
+    //width = MyDiv.clientWidth - margin.left - margin.right,
+    //height = MyDiv.clientHeight - margin.top - margin.bottom;
+    width = 1776 - margin.left - margin.right,
+    height = 983 - margin.top - margin.bottom;
 
 // define zoom fucntion, following example by Mike Bobstock
 var zoom = d3.zoom()
@@ -65,6 +68,9 @@ var tablePaint = paint2.selectAll("g").data(s).enter();
     .attr("width", function(d) {return BarWidth(d.EventCount);})
     .attr("fill", DynamicGradient)
     .attr("id", function(d) {return "ST_" + d.Borough;});
+
+  //add axis for the bars
+  //var a = [{"x": ST_bname_x + 10, "y": }]
   // reset the counter
   i = -1;
   // the borough names for the bars
@@ -264,7 +270,7 @@ paint.append("text")
   .attr("x", key_x + key_width/2 + 20)
   .attr("y", key_y + key_height/2 + 8)
   .style("text-anchor", "start")
-  .text("Fill for each square follows this gradient to show call volume");
+  .text("Fill for each square uses this gradient");
 
 // fire house dot
 paint.append("circle")
@@ -286,6 +292,55 @@ paint.append("text")
   .attr("y", key_y + key_height + 38)
   .style("text-anchor", "start")
   .text("marked by blue circles");
+
+
+//Title information
+var title_x = 250;
+var title_y = 70;
+
+
+paint.append("text")
+  .attr("x", title_x)
+  .attr("y", title_y)
+  .attr("font-size", 60)
+  .attr("font", "Calibri")
+  .attr("fill", d3.rgb(255,255,255))
+  .attr("text-anchor", "start")
+  .attr("font-weight", 700)
+  .text("FDNY 2017 Dispatched Calls");
+
+paint.append("rect")
+  .attr("x", title_x)
+  .attr("y", title_y + 15)
+  .attr("height",3)
+  .attr("width", 750)
+  .attr("fill", d3.rgb(180,180,180));
+
+paint.append("text")
+  .attr("class", "ptext")
+  .attr("x", title_x - 62)
+  .attr("y", title_y + 40)
+  .text("This graphic shows FDNY dispatches in the year 2017. Data was taken from NYC Open Data. A grid was created over the 5 boroughs");
+
+paint.append("text")
+  .attr("class", "ptext")
+  .attr("x", title_x - 62)
+  .attr("y", title_y + 40 + 17)
+  .text("of New York City, the grid is filled based on number of calls in that grid. The FDNY is the largest fire department in the United");
+
+paint.append("text")
+  .attr("class", "ptext")
+  .attr("x", title_x - 62)
+  .attr("y", title_y + 40 + 34)
+  .text("States[4] and responded to over 580,000[1] calls in 2017. A team of firefighters located at 218 firehouses[2] across the");
+
+paint.append("text")
+  .attr("class", "ptext")
+  .attr("x", title_x - 62)
+  .attr("y", title_y + 40 + 51)
+  .text("city ensure these calls do not go un-answered.");
+
+
 
 
 
@@ -311,7 +366,7 @@ var MapProjection = d3.geoEquirectangular()
     //.scale(200000)
     .fitExtent([[0,0],[width,height]], NYCGJ)
     .center([-73.9757, 40.7073])
-    .translate([width/2, height/2]);
+    .translate([width/1.8, height/2]);
 
 // Manhattan path with equirectangular projection
 var MapPath = d3.geoPath()
