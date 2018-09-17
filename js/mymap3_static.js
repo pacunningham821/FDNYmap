@@ -497,3 +497,13 @@ paint.append("text")
 
 }// ready function
 //*/
+
+// REFERENCES
+//Below some is code that was referenced in creation of this map. Thank you to all that posted their code to help others
+//'5.x implementation of a choropleth map, using Promises.' by adamjanes. <https://gist.github.com/adamjanes/6cf85a4fd79e122695ebde7d41fe327f>. Accessed Aug 2018.
+//'indexOf method in an object array?'. by Pablo Francisco Perez Hidalgo. <https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array>. Accessed Aug 2018.
+//
+//Below are some tools and references I used to geocode the fire BOXES
+//'FDNY Fire Alarm Box Locations'. by may2700. <http://www.poi-factory.com/node/11074>. Accessed Aug 2018.
+//'Use the batch geocode tool below..enjoy'. by Google Map Developers. <http://www.mapdevelopers.com/batch_geocode_tool.php>. Accessed Aug 2018.
+//'mapshaper'. by mbloch. <https://mapshaper.org/>. Accessed Aug 2018.
