@@ -10,21 +10,13 @@
 //now. Sep 04, 2018
 
 var margin = {top: 20, right: 20, bottom: 30, left: 50};
-    //width = MyDiv.clientWidth - margin.left - margin.right,
-    //height = MyDiv.clientHeight - margin.top - margin.bottom;
     width = 1776 - margin.left - margin.right,
     height = 983 - margin.top - margin.bottom;
 
 // define zoom fucntion, following example by Mike Bobstock
-var zoom = d3.zoom()
-  .scaleExtent([0.5,20])
-  .translateExtent([[-100,-100],[width + 100, height + 100]])
-  .on("zoom",zoomed);
-
 var canvas = d3.select(".MAP").append("svg")
 	.attr("width", width + margin.left + margin.right)
-	.attr("height", height + margin.top + margin.bottom)
-  .call(zoom);
+	.attr("height", height + margin.top + margin.bottom);
 
 var background = canvas.append("rect")
   .attr("x", 0)
@@ -68,7 +60,6 @@ var tablePaint = paint2.selectAll("g").data(s).enter();
     .attr("width", function(d) {return BarWidth(d.EventCount);})
     .attr("fill", d3.rgb(255,0,0))
     .attr("fill-opacity", 0.8)
-    //.attr("fill", DynamicGradient)
     .attr("id", function(d) {return "ST_" + d.Borough;});
 
   // reset the counter
@@ -383,7 +374,34 @@ paint.append("text")
 	.attr("y", height + margin.top + margin.bottom - refstart + 3*refgap)
   .text("[4] 'New York City Fire Department'. Wikipedia. <https://en.wikipedia.org/wiki/New_York_City_Fire_Department>. Accessed: Aug 2018.");
 
+//signature
+paint.append("text")
+  .attr("class", "reftext")
+  .attr("x", 10)
+	.attr("y", height + margin.top + margin.bottom - refstart + 0*refgap)
+  .style("text-anchor", "start")
+  .text("Created by Paul Cunningham");
 
+paint.append("text")
+  .attr("class", "reftext")
+  .attr("x", 10)
+	.attr("y", height + margin.top + margin.bottom - refstart + 1*refgap)
+  .style("text-anchor", "start")
+  .text("Email: statsracecarestats@gmail.com");
+
+paint.append("text")
+  .attr("class", "reftext")
+  .attr("x", 10)
+	.attr("y", height + margin.top + margin.bottom - refstart + 2*refgap)
+  .style("text-anchor", "start")
+  .text("Github: <https://github.com/pacunningham821/FDNYmap>");
+
+paint.append("text")
+  .attr("class", "reftext")
+  .attr("x", 10)
+	.attr("y", height + margin.top + margin.bottom - refstart + 3*refgap)
+  .style("text-anchor", "start")
+  .text("V1.0 September 2018");
 
 // GEOJSON data of NYC
 var NYCGJ = {
@@ -479,43 +497,3 @@ paint.append("text")
 
 }// ready function
 //*/
-
-function zoomed() {
-  paint.attr("transform", d3.event.transform);
-  paint2.attr("transform", d3.event.transform);
-}
-
-function DynamicGradient(d) {
-
-  var gradient = canvas.append("defs")
-    .append("linearGradient")
-      .attr("id", "gradient" + d.ID)
-      .attr("x1", "0%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "0%")
-      .attr("spreadMethod", "pad");
-
-  gradient.append("stop")
-    .attr("class", "left")
-    .attr("offset", "0%")
-    .attr("stop-color", d3.rgb(255,255,255))
-    .attr("stop-opacity", 1);
-
-  gradient.append("stop")
-    .attr("class", "right")
-    .attr("offset", "100%")
-    .attr("stop-color", d3.rgb(240,255-255*d.EventCount/168309,255-255*d.EventCount/168309))
-    .attr("stop-opacity", 1);
-
-  return ("url(#gradient" + d.ID + ")")
-}
-//function handleMouseOver(d) {
-//  d3.select(this).attr("stroke",d3.rgb(20,20,20));
-//  d3.select(this).attr("stroke-width", 2);
-//  console.log("Here")
-//}
-
-//function handleMouseOut (d) {
-//
-//}

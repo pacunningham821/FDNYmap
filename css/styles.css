@@ -30,3 +30,10 @@
   fill: rgb(255,255,255);
   text-anchor: start;
 }
+
+.reftext {
+  font: Calibri;
+  font-size: 10px;
+  fill: rgb(180,180,180);
+  text-anchor: end;
+}
