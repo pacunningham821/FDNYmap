@@ -28,7 +28,7 @@ summary_Table.csv
 Map (GEOJSON file hard coded in javascript file): NYC_w_Grid.geojson
 
 ## Other Code Referrenced, Thank Yous
-[Referenced adamjanes code to implement promises in D3 V5.](https://gist.github.com/adamjanes/6cf85a4fd79e122695ebde7d41fe327f)
+[Referenced Github user adamjanes code to implement promises in D3 V5.](https://gist.github.com/adamjanes/6cf85a4fd79e122695ebde7d41fe327f)
 
 [Used a novel solution to index object arrays presented by Pablo Francisco Perez Hidalgo on Stack Overflow](https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array)
 
