@@ -1,3 +1,7 @@
+div {
+  overflow:auto;
+}
+
 #stuffgoeshere {
   position: fixed;
         left: 0px;
