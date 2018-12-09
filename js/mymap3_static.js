@@ -401,7 +401,7 @@ paint.append("text")
   .attr("x", 10)
 	.attr("y", height + margin.top + margin.bottom - refstart + 3*refgap)
   .style("text-anchor", "start")
-  .text("V1.0 September 2018");
+  .text("V1.1 December 2018");
 
 // GEOJSON data of NYC
 var NYCGJ = {
