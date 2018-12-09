@@ -35,6 +35,6 @@ Map (GEOJSON file hard coded in javascript file): NYC_w_Grid.geojson
 Lastly used mbloch's [mapshaper](https://mapshaper.org/) program through out the project to check the shape and geojson files I was creating.
 
 ## Notes
-Map is a fixed size in its current creation, I have exported it to a pdf file for easier viewing, draft1.pdf.
+Map is a fixed size in its current creation, I have exported it to a pdf file for easier viewing, draft2.pdf.
 
 V1.0 had errors in the call count due to grid spaces that fell on the borders of boughs, it would count the calls multiple times for each borough. That has been corrected in V1.1.
