@@ -394,7 +394,7 @@ paint.append("text")
   .attr("x", 10)
 	.attr("y", height + margin.top + margin.bottom - refstart + 2*refgap)
   .style("text-anchor", "start")
-  .text("Github: <https://github.com/pacunningham821/FDNYmap>");
+  .text("Github: <https://github.com/statsracecarstats/FDNYmap>");
 
 paint.append("text")
   .attr("class", "reftext")
